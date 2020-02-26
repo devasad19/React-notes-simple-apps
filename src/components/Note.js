@@ -1,14 +1,20 @@
 import React, { Component } from 'react';
 import { NoteContext } from './context/Note.context';
+import axios from 'axios';
 class Note extends Component {
 
     static contextType = NoteContext;
-    handleRemove = (id) => {
-        this.context.removeNote(id);
+    handleRemove = async id => {
+        try{
+            await axios.delete(`https://jsonplaceholder.typicode.com/comments/${id}`);
+            this.context.removeNote(id);
+        }catch(e){
+            console.log(e);
+        }
     }
 
     render(){
-        const {id, title, description } = this.props.note;
+        const {id, name: title, body: description } = this.props.note;
     
         return (
             <div className="card mt-3">

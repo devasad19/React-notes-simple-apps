@@ -1,29 +1,35 @@
 import React, {Component, createContext} from 'react';
+import axios from 'axios';
+
 
 export const NoteContext = createContext();
-
 export class NoteProvider extends Component{
 
     state = {
-        notes: [
-             {
-                 id: 1,
-                 title: 'note title 1',
-                 description: 'description 1'
-             },
-             {
-                 id: 2,
-                 title: 'note title 2',
-                 description: 'description 2'
-             },
-             {
-                 id: 3,
-                 title: 'note title 3',
-                 description: 'description 3'
-             }
-         ]
+        notes: [ ]
      }
  
+    // API Section
+async componentDidMount(){
+    try{
+        const res = await axios.get('https://jsonplaceholder.typicode.com/comments');
+        const {data} = res;
+        this.setState({
+            notes: data
+        });
+    }catch(e){
+        console.log(e);
+    }
+}
+
+
+
+    //  componentDidMount(){
+    //      axios.get('https://jsonplaceholder.typicode.com/comments').then( res => 
+    //         console.log(res)
+    //      )
+    //  }
+
      addNote = note =>{
          this.setState({
              notes: [...this.state.notes, note]

@@ -2,6 +2,7 @@ import React, {Component} from 'react';
 import uuid from 'uuid/v4';
 import classNames from 'classnames';
 import { NoteContext } from './context/Note.context';
+import axios from 'axios';
 
 class AddNote extends Component{
     static contextType = NoteContext;
@@ -18,7 +19,7 @@ class AddNote extends Component{
         });
     };
 
-    handleSubmit = e =>{
+    handleSubmit = async e =>{
         e.preventDefault();
         if(this.state.title === ''){
             this.setState({
@@ -41,14 +42,27 @@ class AddNote extends Component{
             return;
         }
 
-        this.context.addNote(this.state);
-        this.props.history.push('/')
-        this.setState({
-            id: '',
-            title: '',
-            description: '',
-            errors: {}
-        });
+        try{
+            const res = await axios.post('https://jsonplaceholder.typicode.com/comments', {
+                name: this.state.title,
+                body : this.state.description
+            });
+    
+            const {data} = res
+            this.context.addNote(data);
+            this.props.history.push('/')
+        }catch(e){
+            console.log(e);
+        }
+
+
+
+        // this.setState({
+        //     id: '',
+        //     title: '',
+        //     description: '',
+        //     errors: {}
+        // });
 
     };
 
