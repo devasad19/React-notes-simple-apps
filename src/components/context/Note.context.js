@@ -1,58 +1,61 @@
-import React, {Component, createContext} from 'react';
+import React, {useState, createContext, useEffect} from 'react';
 import axios from 'axios';
 
-
 export const NoteContext = createContext();
-export class NoteProvider extends Component{
 
-    state = {
-        notes: [ ]
-     }
+export const NoteProvider = (props) => {
+   const[notes, setNotes] = useState([
+        {
+            id: 1,
+            title: 'this is the tiele 1',
+            description: 'description 1'
+        },
+        
+        {
+            id: 2,
+            title: 'this is the tiele 2',
+            description: 'description 2'
+        },
+        
+        {
+            id: 3,
+            title: 'this is the tiele 3',
+            description: 'description 3'
+        }
+    ]);
  
     // API Section
-async componentDidMount(){
-    try{
-        const res = await axios.get('https://jsonplaceholder.typicode.com/comments');
-        const {data} = res;
-        this.setState({
-            notes: data
-        });
-    }catch(e){
-        console.log(e);
-    }
-}
 
+    useEffect(() => {
+        const runAsyncCode = async() => {
+            try{
+                const res = await axios.get('https://jsonplaceholder.typicode.com/comments');
+                const {data} = res;
+                setNotes(data);
+            }catch(e){
+                console.log(e);
+            }
+        }
+        runAsyncCode();
+    }, []);  // here [] means useEffect method call onece
 
-
-    //  componentDidMount(){
-    //      axios.get('https://jsonplaceholder.typicode.com/comments').then( res => 
-    //         console.log(res)
-    //      )
-    //  }
-
-     addNote = note =>{
-         this.setState({
-             notes: [...this.state.notes, note]
-         });
+     const addNote = note =>{
+        setNotes([...notes, note]);
      };
 
-     removeNote = id =>{
-         this.setState({
-             notes: this.state.notes.filter(note => note.id !== id)
-         });
+    const removeNote = id =>{
+        setNotes([...notes.filter(note => note.id !== id)]);
      };
 
-    render(){
-        return(
-             <NoteContext.Provider value={{
-                   notes: this.state.notes,
-                   addNote: this.addNote,
-                   removeNote: this.removeNote
-                }}>
-                    
-                {this.props.children}
-             </NoteContext.Provider>
-        )
-    }
+    return(
+            <NoteContext.Provider value={{
+                notes: notes,
+                addNote: addNote,
+                removeNote: removeNote
+            }}>
+                
+            {props.children}
+            </NoteContext.Provider>
+    )
 
 }
